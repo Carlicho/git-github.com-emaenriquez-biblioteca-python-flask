@@ -1,7 +1,7 @@
 from app.database import get_db
 
 class Book:
-    def __init__(self, id_book, book_title, author_name, publication_date, book_cover):
+    def __init__(self, book_title, author_name, publication_date, book_cover, id_book=None):
         self.id_book = id_book
         self.book_title = book_title
         self.author_name = author_name
@@ -30,7 +30,7 @@ class Book:
         cursor = db.cursor()
         cursor.execute("SELECT * FROM books")
         books = cursor.fetchall()
-        return [Book(*book) for book in books]
+        return [Book(id_book=book[0], book_title=book[1], author_name=book[2], publication_date=book[3], book_cover=book[4]) for book in books]
 
     @staticmethod
     def get_by_id(id_book):
@@ -39,7 +39,7 @@ class Book:
         cursor.execute("SELECT * FROM books WHERE id_book = %s", (id_book,))
         book = cursor.fetchone()
         if book:
-            return Book(*book)
+            return Book(id_book=book[0], book_title=book[1], author_name=book[2], publication_date=book[3], book_cover=book[4])
         return None
 
     def delete(self):
@@ -50,7 +50,7 @@ class Book:
 
     def serialize(self):
         return {
-            'book_id': self.id_book,
+            'id_book': self.id_book,
             'book_title': self.book_title,
             'author_name': self.author_name,
             'publication_date': self.publication_date,
